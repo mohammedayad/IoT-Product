@@ -7,6 +7,6 @@
   
 # Overview
 ###### Tracking Devices is An APIs to delete,update and get tracking devices associated with SIM cards .
-###### to run the application just execute the runApp.sh file.
+###### to run the application just execute the run.sh file.
 
 ###### You can view the api documentation in swagger-ui by http://localhost:8080/
