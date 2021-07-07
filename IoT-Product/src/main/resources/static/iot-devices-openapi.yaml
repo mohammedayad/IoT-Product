@@ -1,0 +1,362 @@
+openapi: 3.0.2
+info:
+  title: Voice IOT Products
+  description: >-
+    Voice IOT Products Service APIs will be used to configure and manage IoT tracking devices.
+  contact:
+    name: IOT API Team
+    url: 'https://github.com/mohammedayad/IoT-Product'
+    email: mohammedayad611@gmail.com
+  version: 0.0.1
+tags:
+  - name: Manage IoT tracking devices
+    description: APIs to create, update, delete and retrieve IoT tracking devices
+servers:
+  - url: '{protocol}://{server}:{port}/{basePath}'
+    description: Internal Server
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+      server:
+        default: localhost
+      basePath:
+        default: api/voice/iot-product-service
+      port:
+        enum:
+          - '80'
+          - '443'
+          - '8080'
+        default: '8080'
+  - url: '{protocol}://{server}/{basePath}'
+    description: Remote Server
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+      server:
+        default: avaya-contact-center
+      basePath:
+        default: iot-product/api/voice/iot-product-service
+paths:
+  /v1/devices/status/{status}:
+    get:
+      tags:
+        - Manage IoT tracking devices
+      summary: Returns all devices in the warehouse that are waiting for activation
+      description: Get All devices that waiting for activation
+      operationId: getAllDevices
+      parameters:
+        - name: status
+          in: path
+          description: device status
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: pageNumber
+          in: query
+          description: The page number of the records to retrieve. Default value is 1
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+            minimum: 1
+        - name: pageSize
+          in: query
+          description: The max number of records to retrieve per page. Default value is 10, max value is 25.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+            minimum: 1
+            maximum: 25
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Devices'
+        400:
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        404:
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        401:
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /v1/devices:
+    get:
+      tags:
+        - Manage IoT tracking devices
+      summary: Returns an ordered result of devices available for sale
+      description: Get devices available for sale
+      operationId: getDevicesAvailableForSale
+      parameters:
+        - name: pageNumber
+          in: query
+          description: The page number of the records to retrieve. Default value is 1
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+            minimum: 1
+        - name: pageSize
+          in: query
+          description: The max number of records to retrieve per page. Default value is 10, max value is 25.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+            minimum: 1
+            maximum: 25
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Devices'
+        400:
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        404:
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        401:
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /v1/devices/{deviceId}:
+    put:
+      tags:
+        - Manage IoT tracking devices
+      summary: update a device configuration status By Id
+      description: update a device configuration status By Id
+      operationId: updateDeviceConfigurationStatusById
+      parameters:
+        - name: deviceId
+          in: path
+          description: device id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: device object that needs to be updated.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Device'
+        required: true
+      responses:
+        204:
+          description: No Content
+        400:
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        404:
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        401:
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    delete:
+      tags:
+        - Manage IoT tracking devices
+      summary: Delete a device configuration status By Id
+      description: Delete a device configuration status By Id
+      operationId: deleteDeviceConfigurationStatusById
+      parameters:
+        - name: deviceId
+          in: path
+          description: device id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: No Content
+        400:
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        404:
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        401:
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: This API uses Bearer Token Authorization Flow
+      bearerFormat: JWT
+  schemas:
+    Devices:
+      type: object
+      properties:
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/Device"
+    Device:
+      type: object
+      description: >
+        IOT tracking device
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: The name of Device.
+          example: Samsara
+        description:
+          type: string
+          description: device description
+          example: description
+        status:
+          type: string
+          description: device status
+          example: READY
+        temperature:
+          type: string
+          description: device temperature
+          example: 75'C
+        simId:
+          type: integer
+          description: sim card id
+          $ref: "#/components/schemas/SimCard"
+
+    SimCard:
+      type: object
+      description: >
+        SIM (Subscriber Identification Module) card
+      properties:
+        simId:
+          type: string
+          format: uuid
+          description: uniquely identify the SIM cardid.
+        operatorCode:
+          type: string
+          description:  uniquely identify a mobile operator.
+          example: Operator code
+        country:
+          type: string
+          description: country name.
+          example: Italy
+        status:
+          type: string
+          description: device status
+          enum:
+            - Active
+            - Waiting for activation
+            - Blocked
+            - Deactivated
+
+    Pagination:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          description: The current page number.
+        pageSize:
+          type: integer
+          description: The max number of records that can be retrieved on this page.
+        total:
+          type: integer
+          description: The total number of records.
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the problem type.  When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: 'about:blank'
+          example: 'https://api.avaya.com/problem/constraint-violation'
+        title:
+          type: string
+          description: |
+            A short, summary of the problem type. Written in english and readable
+            for engineers (usually not suited for non-technical stakeholders and
+            not localized); example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: |
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          type: string
+          description: |
+            A human readable explanation specific to this occurrence of the
+            problem.
+          example: Connection to database timed out
+        instance:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.
