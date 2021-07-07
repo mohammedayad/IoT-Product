@@ -178,7 +178,7 @@
                         </goals>
                         <configuration>
                             <skipIfSpecIsUnchanged>false</skipIfSpecIsUnchanged>
-                            <inputSpec>${project.basedir}/src/main/resources/static/pre-routing-config.yaml
+                            <inputSpec>${project.basedir}/src/main/resources/static/iot-devices-openapi.yaml
                             </inputSpec>
                             <generatorName>spring</generatorName>
                             <output>${project.basedir}</output>
